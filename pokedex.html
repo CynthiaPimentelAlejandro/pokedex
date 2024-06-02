@@ -1,0 +1,155 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <script src="https://ajax.googleapis.com/ajax/libs/jquery/1.11.2/jquery.min.js"></script>
+        <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.1/css/bootstrap.min.css">
+        <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.1/css/bootstrap-theme.min.css">
+        <script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.1/js/bootstrap.min.js"></script>
+       
+    <title>Pokemon</title>
+  <style>
+    body{
+      background-color: rgb(166, 208, 248);
+    }
+    .pokeimg1{
+      position:absolute;
+
+    }
+    .pokeImg{
+      width: 160px;
+      height: 160px;
+      position: absolute;
+      top: 176px;
+      left: 130px;
+
+    }
+    button{
+      width: 50px;
+      height: 50px;
+      background-color:rgb(166, 208, 248);
+      border-color:brown;
+      border-radius: 50px;
+      position:absolute;
+      left: 55px;
+      top:400px;
+     
+    }
+    .placeholder{
+      width:130px;
+      height: 60px;
+      position: absolute;
+      top: 470px;
+      left: 105px;
+      font-size: 25px;
+      font-family: 'Lucida Sans', 'Lucida Sans Regular', 'Lucida Grande', 'Lucida Sans Unicode', Geneva, Verdana, sans-serif;
+      border-radius: 10px;
+      background-color: transparent;
+      text-align: center;
+      
+    }
+    .grafica{
+      width: 225px;
+      height: 225px;
+      position: absolute;
+      top:180px;
+      left: 490px;
+    }
+
+    
+  </style>
+    <img src="pokedex.jpg" alt="Pokedex" width="800px">
+    <input type="text" placeholder="squirtle" id="pokeName" class="placeholder">
+    <img src = "pokebola.jpg" alt="Pokebola" id="pokeImg" width="250px" class="pokeImg">
+
+    <div id="pokename" class="pokeimg1" style="left: 490px; top:310px;font-size:13px;">Nombre:</div>
+    <div id="pokeHe" class="pokeimg1" style="left: 492px; top:345px;font-size:13px;">Altura:</div>
+    <div id="pokeWe" class="pokeimg1" style="left: 650px; top:344px;font-size:13px;">Peso:</div>
+    <div id="poketype" class="pokeimg1" style="left: 650px; top:310px;font-size:13px;">Tipo:</div>
+    <div id="pokeitem" class="pokeimg1" style="left: 300px; top:300px;font-size:15px;"></div>
+    <div id="pokemove1" class="pokeimg1" style="left: 300px; top:300px;font-size:15px;"></div>
+    <div id="pokemove2" class="pokeimg1" style="left: 300px; top:300px;font-size:15px;"></div>
+    <div id="pokemove3" class="pokeimg1" style="left: 300px; top:300px;font-size:15px;"></div>
+    <div id="pokemove4" class="pokeimg1" style="left: 300px; top:300px;font-size:15px;"></div>
+
+    <div id="pokeid" class="pokeimg1" style="left: 200px; top:400px;font-size:15px;"></div>
+    <div id="pokeorder" class="pokeimg1" style="left: 700px; top:700px;font-size:15px;"></div>
+
+    <button onclick="fetchPokemon()" class="button"></button>
+    <div class="grafica">
+        <canvas id="miCanvas"></canvas>
+        </div>
+
+        <script>
+             const fetchPokemon = () => {
+        const pokeNameInput = document.getElementById("pokeName");
+        let pokeName = pokeNameInput.value;
+        pokeName = pokeName.toLowerCase();
+        const url = `https://pokeapi.co/api/v2/pokemon/${pokeName}`;
+
+        fetch(url).then(res => {
+                if (!res.ok) {
+                    throw new Error('No se pudo obtener la respuesta de la red');
+                }
+                return res.json();
+            })
+            .then(data => {
+                console.log(data);
+
+              
+                let pokeImgSrc = data.sprites.front_default;
+                document.getElementById('pokeImg').src = pokeImgSrc;
+
+                
+                document.getElementById('pokename').innerHTML = `Nombre: ${data.forms[0].name}`;
+                document.getElementById('pokeHe').innerHTML = `Altura: ${data.height / 10} m`;
+                document.getElementById('pokeWe').innerHTML = `Peso: ${data.weight / 10} kg`;
+                document.getElementById('poketype').innerHTML = `Tipo: ${data.types.map(type => type.type.name).join(', ')}`;
+
+                const miCanvas = document.getElementById("miCanvas").getContext("2d");
+                if (window.miCanvas !== undefined) {
+                }
+                window.miCanvas = new Chart(miCanvas, {
+                    type: "bar",
+                    data: {
+                        labels: ["HP", "Attack", "Defense", "Special-A", "Special-D", "Speed"],
+                        datasets: [{
+                            label: data.forms[0].name,
+                            backgroundColor: 'rgba(54,162,235,1)',
+                                data:[
+                                    data.stats[0].base_stat,
+                                    data.stats[1].base_stat,
+                                    data.stats[2].base_stat,
+                                    data.stats[3].base_stat,
+                                    data.stats[4].base_stat,
+                                    data.stats[5].base_stat
+                                ],
+                                borderColor: [
+                                    'rgba(255, 99, 132, 1)',
+                                    'rgba(54, 162, 235, 1)',
+                                    'rgba(255, 206, 86, 1)',
+                                    'rgba(75, 192, 192, 1)',
+                                    'rgba(153, 102, 255, 1)',
+                                    'rgba(255, 159, 64, 1)'
+                                ],
+                                backgroundColor: [
+                                    'rgba(255, 99, 132, 0.5)',
+                                    'rgba(54, 162, 235, 0.5)',
+                                    'rgba(255, 206, 86, 0.5)',
+                                    'rgba(75, 192, 192, 0.5)',
+                                    'rgba(153, 102, 255, 0.5)',
+                                    'rgba(255, 159, 64, 0.5)'
+                                ]
+                            }]
+                        }
+                    });
+                })
+                    }
+                      
+                                     
+            </script>
+        <script src="chart.js"></script>
+</body>
+</html>
